@@ -131,7 +131,7 @@ export default function App() {
             }
           })}
 
-          <div className="navbar">
+          <div>
             <button onClick={() => changeButtonType('draw')} style={{ marginTop: '1%', marginBottom: '1%' }}>
               Draw
             </button>

@@ -65,7 +65,6 @@ function ModifyPage(props) {
 
     return (
         <div>
-            {/*<button style = {{marginTop: "1%"}} onClick = {modifyPdf}>Download PDF</button>*/}
         </div>
     )
 }

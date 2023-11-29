@@ -7,7 +7,7 @@ export default function SinglePage(props) {
 
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1); 
-
+ console.log("SinglePage",props)
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
     setPageNumber(1);
@@ -49,21 +49,7 @@ export default function SinglePage(props) {
       </DrawArea>
       </Document>
       </div>
-      <div>
-        <p>
-          Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}
-        </p>
-        <button type="button" disabled={pageNumber <= 1} onClick={previousPage}>
-        <i style ={{fontSize: 25}} className="fa fa-fw fa-arrow-left"></i>
-        </button>
-        <button
-          type="button"
-          disabled={pageNumber >= numPages}
-          onClick={nextPage}
-        >
-        <i style ={{fontSize: 25}} className="fa fa-fw fa-arrow-right"></i>
-        </button>
-      </div>
+     
     </>
   );
 }

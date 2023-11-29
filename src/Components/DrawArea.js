@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import Immutable from 'immutable'
 
 function DrawArea(props) {
-  
+
   const [lines, setLines] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [redoEl, setRedoEl] = useState([]);
@@ -110,6 +110,8 @@ function DrawArea(props) {
 }
 
 function Drawing({ lines, page }) {
+  console.log("DrawArea",lines)
+
   return (
     <svg className="drawing" style = {{zIndex:10}}>
       {lines.map((line, index) => (
