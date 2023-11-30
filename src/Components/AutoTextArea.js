@@ -28,9 +28,9 @@ function AutoTextArea(props) {
 
 	return (
 		<div
-			style={{
-				minHeight: parentHeight,
-			}, props.style}
+			// style={{
+			// 	minHeight: parentHeight,
+			// }, props.style}
 			ref = {divAreaRef}
 		>
 			<textarea

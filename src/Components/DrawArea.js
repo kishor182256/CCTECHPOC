@@ -7,6 +7,7 @@ function DrawArea(props) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [redoEl, setRedoEl] = useState([]);
   const [isCrosshair, setIsCrosshair] = useState(false);
+  const [cordinates,setCordinates] = useState()
   const drawAreaEl = useRef(null);
 
   useEffect(() => {
@@ -48,9 +49,11 @@ function DrawArea(props) {
     }
   },[isDrawing])
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
     setIsCrosshair(false);
     setIsDrawing(false);
+    const stopCoordinates = relativeCoordinatesForEvent(e);
+    console.log('Drawing stopped. Stop Coordinates:', stopCoordinates?._root?.entries);
   }
 
   const handleMouseDown = (e) => {
@@ -58,7 +61,10 @@ function DrawArea(props) {
     if (e.button !== 0) {
       return;
     }
+    setCordinates()
+    
     const point = relativeCoordinatesForEvent(e);
+    console.log("Drawing started. Start Coordinates:",point?._root?.entries)
     let obj = {
       arr: [point],
       page: props.page,
@@ -110,7 +116,7 @@ function DrawArea(props) {
 }
 
 function Drawing({ lines, page }) {
-  console.log("DrawArea",lines)
+  
 
   return (
     <svg className="drawing" style = {{zIndex:10}}>
