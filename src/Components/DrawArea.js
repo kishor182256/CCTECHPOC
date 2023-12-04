@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
-import Immutable from 'immutable'
+import React, { useState, useEffect, useRef } from 'react';
+import Immutable from 'immutable';
 
 function DrawArea(props) {
-
   const [lines, setLines] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [redoEl, setRedoEl] = useState([]);
   const [isCrosshair, setIsCrosshair] = useState(false);
-  const [cordinates,setCordinates] = useState()
   const drawAreaEl = useRef(null);
 
   useEffect(() => {
@@ -15,75 +12,73 @@ function DrawArea(props) {
     props.getBounds({
       x: drawAreaEl.current.getBoundingClientRect().left,
       y: drawAreaEl.current.getBoundingClientRect().bottom,
-    })
+    });
     return () => {
       document.getElementById("drawArea").removeEventListener("mouseup", handleMouseUp);
-    }
-  },[])
+    };
+  }, []);
 
   useEffect(() => {
-    if(props.flag === "undo")
-    {
-      setRedoEl(arr => [...arr,lines.pop()]);
-      setLines(lines);
+    if (props.flag === "undo") {
+      setLines((prevLines) => [...prevLines.slice(0, -1)]);
+      props.changeFlag();
     }
-    if(props.flag === "redo")
-    {
-      setLines(lines => [...lines,redoEl.pop()]);
+    if (props.flag === "redo") {
+      // Implement redo logic if needed
+      props.changeFlag();
     }
-    props.changeFlag();
-  },[props.flag])
+  }, [props.flag]);
 
   useEffect(() => {
-    if(props.buttonType === "draw")
-    {
+    if (props.buttonType === "draw") {
       addMouseDown();
       props.resetButtonType();
     }
-  },[props.buttonType])
+  }, [props.buttonType]);
 
   useEffect(() => {
-    if(isDrawing === false && lines.length)
-    {
-      props.getPaths(lines[lines.length-1]);
+    if (!isDrawing && lines.length) {
+      props.getPaths(lines[lines.length - 1]);
     }
-  },[isDrawing])
+  }, [isDrawing, lines, props]);
 
   const handleMouseUp = (e) => {
     setIsCrosshair(false);
     setIsDrawing(false);
     const stopCoordinates = relativeCoordinatesForEvent(e);
     console.log('Drawing stopped. Stop Coordinates:', stopCoordinates?._root?.entries);
-  }
+  };
 
   const handleMouseDown = (e) => {
-
     if (e.button !== 0) {
       return;
     }
-    setCordinates()
-    
-    const point = relativeCoordinatesForEvent(e);
-    console.log("Drawing started. Start Coordinates:",point?._root?.entries)
+
+    const startCoordinates = relativeCoordinatesForEvent(e);
+    console.log("Drawing started. Start Coordinates:", startCoordinates?._root?.entries);
+
     let obj = {
-      arr: [point],
+      start: startCoordinates,
+      end: startCoordinates, // Initial end coordinates
       page: props.page,
-      type: "freehand",
-    }
-    setLines(prevlines => [...prevlines,obj]);
+      type: "line",
+    };
+    setLines((prevLines) => [...prevLines, obj]);
     setIsDrawing(true);
-  }
+  };
 
   const handleMouseMove = (e) => {
     if (!isDrawing) {
       return;
     }
-    const point = relativeCoordinatesForEvent(e);
-    let last = lines.pop();
-    last.arr.push(point);
-    setLines(prevlines =>[...prevlines,last]);  
-  }
 
+    const endCoordinates = relativeCoordinatesForEvent(e);
+    setLines((prevLines) =>
+      prevLines.map((line, index) =>
+        index === prevLines.length - 1 ? { ...line, end: endCoordinates } : line
+      )
+    );
+  };
 
   const relativeCoordinatesForEvent = (e) => {
     const boundingRect = drawAreaEl.current.getBoundingClientRect();
@@ -91,55 +86,53 @@ function DrawArea(props) {
       x: e.clientX - boundingRect.left,
       y: e.clientY - boundingRect.top,
     });
-  }
+  };
 
   const addMouseDown = () => {
     setIsCrosshair(true);
-    document.getElementById("drawArea").addEventListener("mousedown",handleMouseDown, { once: true });
-  }
+    document.getElementById("drawArea").addEventListener("mousedown", handleMouseDown, { once: true });
+  };
 
   return (
     <>
-    {/*<button onClick = {addMouseDown} style = {{marginBottom: "1%", marginTop: "1%"}}>Draw</button>*/}
-    <div
+      <div
         id="drawArea"
         ref={drawAreaEl}
-        style = {isCrosshair ? {cursor: "crosshair"} : {cursor: props.cursor}}
+        style={isCrosshair ? { cursor: "crosshair" } : { cursor: props.cursor }}
         onMouseMove={handleMouseMove}
-    >
-      {props.children}
-      <Drawing lines={lines} page = {props.page}/>
-    </div>
+      >
+        {props.children}
+        <Drawing lines={lines} page={props.page} />
+      </div>
     </>
-  )
-
+  );
 }
 
 function Drawing({ lines, page }) {
-  
-
   return (
-    <svg className="drawing" style = {{zIndex:10}}>
+    <svg className="drawing" style={{ position: 'absolute', zIndex: 10, top: 0, left: 0, pointerEvents: 'none' }}>
       {lines.map((line, index) => (
-        <DrawingLine key={index} line={line} page = {page}/>
+        <DrawingLine key={index} line={line} page={page} />
       ))}
     </svg>
   );
 }
 
 function DrawingLine({ line, page }) {
-  const pathData = "M " +
-    line.arr
-      .map(p => {
-        return `${p.get('x')},${p.get('y')}`;
-      })
-      .join(" L ");
-  
-  if(line.page === page)
-  {
-    return <path className="path" d={pathData} />;
+  if (line.page === page && line.type === "line") {
+    return (
+      <line
+        className="line"
+        x1={line.start.get("x")}
+        y1={line.start.get("y")}
+        x2={line.end.get("x")}
+        y2={line.end.get("y")}
+        stroke="red"
+        strokeWidth="2"
+      />
+    );
   }
   return null;
 }
 
-export default DrawArea
+export default DrawArea;
