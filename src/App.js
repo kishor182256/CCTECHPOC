@@ -125,7 +125,7 @@ export default function App() {
         >
           <div
             style={{
-              background: "#1a73e8",
+              background: "#3498DB ",
               color: "#fff",
               padding: "10px",
               border: "none",
@@ -148,7 +148,7 @@ export default function App() {
         <div>
             <button
               onClick={() => changeButtonType("draw")}
-              style={{ marginTop: "1%", marginBottom: "1%",background:"#1a73e8" }}
+              style={{ marginTop: "1%", marginBottom: "1%",background:"#2874A6" }}
             >
               Draw
             </button>
