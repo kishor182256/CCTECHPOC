@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
-import SinglePage from './Components/SinglePage';
-import DrawArea from './Components/DrawArea'; 
-import AutoTextArea from './Components/AutoTextArea'; 
-
+import SinglePage from "./Components/SinglePage";
+import DrawArea from "./Components/DrawArea";
+import AutoTextArea from "./Components/AutoTextArea";
 
 export default function App() {
   const [result, setResult] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [redoStack, setRedoStack] = useState([]);
-  const [flag, setFlag] = useState('');
+  const [flag, setFlag] = useState("");
   const [bounds, setBounds] = useState({});
   const [isText, setIsText] = useState(false);
-  const [buttonType, setButtonType] = useState('');
+  const [buttonType, setButtonType] = useState("");
   const [pdfFile, setPdfFile] = useState(null);
 
   const tempRef = useRef(null);
@@ -34,20 +33,32 @@ export default function App() {
 
   const addText = () => {
     setIsText(true);
-    document.getElementById('drawArea').addEventListener('click', (e) => {
-      e.preventDefault();
-      setResult((result) => [
-        ...result,
-        { id: generateKey(e.pageX), x: e.pageX, y: e.pageY - 10, text: '', page: pageNumber, type: 'text', ref: tempRef },
-      ]);
-    }, { once: true });
+    document.getElementById("drawArea").addEventListener(
+      "click",
+      (e) => {
+        e.preventDefault();
+        setResult((result) => [
+          ...result,
+          {
+            id: generateKey(e.pageX),
+            x: e.pageX,
+            y: e.pageY - 10,
+            text: "",
+            page: pageNumber,
+            type: "text",
+            ref: tempRef,
+          },
+        ]);
+      },
+      { once: true }
+    );
   };
 
   const undo = () => {
     let temp = result.pop();
     if (temp) {
-      if (temp.type === 'freehand') {
-        setFlag('undo');
+      if (temp.type === "freehand") {
+        setFlag("undo");
       }
       setRedoStack((stack) => [...stack, temp]);
       setResult(result);
@@ -55,14 +66,14 @@ export default function App() {
   };
 
   const changeFlag = () => {
-    setFlag('');
+    setFlag("");
   };
 
   const redo = () => {
     let top = redoStack.pop();
     if (top) {
-      if (top.type === 'freehand') {
-        setFlag('redo');
+      if (top.type === "freehand") {
+        setFlag("redo");
       }
       setResult((res) => [...res, top]);
     }
@@ -94,19 +105,23 @@ export default function App() {
   };
 
   const resetButtonType = () => {
-    setButtonType('');
+    setButtonType("");
   };
 
   return (
     <div className="App">
-      <input type="file" onChange={handleFileChange} />
+      <div style={{background:"#1a73e8",height:"60px"}}>
+      <div style={{ display: "flex", alignItems: "center"}}>
+        <input type="file" onChange={handleFileChange} style={{margin:"10px",marginTop:"5px"}} />
+      </div>
+      </div>
       {pdfFile && (
         <>
           {result.map((res) => {
-            if (res.type === 'text') {
-              let isShowing = 'hidden';
+            if (res.type === "text") {
+              let isShowing = "hidden";
               if (res.page === pageNumber) {
-                isShowing = 'visible';
+                isShowing = "visible";
               }
               return (
                 <AutoTextArea
@@ -116,13 +131,13 @@ export default function App() {
                   onTextChange={onTextChange}
                   style={{
                     visibility: isShowing,
-                    color: 'red',
-                    fontWeight: 'normal',
+                    color: "red",
+                    fontWeight: "normal",
                     fontSize: 16,
                     zIndex: 20,
-                    position: 'absolute',
-                    left: res.x + 'px',
-                    top: res.y + 'px',
+                    position: "absolute",
+                    left: res.x + "px",
+                    top: res.y + "px",
                   }}
                 ></AutoTextArea>
               );
@@ -132,7 +147,10 @@ export default function App() {
           })}
 
           <div>
-            <button onClick={() => changeButtonType('draw')} style={{ marginTop: '1%', marginBottom: '1%' }}>
+            <button
+              onClick={() => changeButtonType("draw")}
+              style={{ marginTop: "1%", marginBottom: "1%" }}
+            >
               Draw
             </button>
           </div>
@@ -140,7 +158,7 @@ export default function App() {
           <SinglePage
             resetButtonType={resetButtonType}
             buttonType={buttonType}
-            cursor={isText ? 'text' : 'default'}
+            cursor={isText ? "text" : "default"}
             pdf={pdfFile}
             pageChange={pageChange}
             getPaths={getPaths}
