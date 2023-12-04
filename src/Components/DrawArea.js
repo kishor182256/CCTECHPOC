@@ -5,6 +5,8 @@ function DrawArea(props) {
   const [lines, setLines] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isCrosshair, setIsCrosshair] = useState(false);
+  const [start,setStart] = useState();
+  const [end,setEnd] = useState();
   const drawAreaEl = useRef(null);
 
   useEffect(() => {
@@ -40,13 +42,13 @@ function DrawArea(props) {
     if (!isDrawing && lines.length) {
       props.getPaths(lines[lines.length - 1]);
     }
-  }, [isDrawing, lines, props]);
+  }, [ lines, props]);
 
   const handleMouseUp = (e) => {
     setIsCrosshair(false);
     setIsDrawing(false);
     const stopCoordinates = relativeCoordinatesForEvent(e);
-    console.log('Drawing stopped. Stop Coordinates:', stopCoordinates?._root?.entries);
+    setEnd( stopCoordinates ? `X: ${stopCoordinates.get('x')}, Y: ${stopCoordinates.get('y')}` : null);
   };
 
   const handleMouseDown = (e) => {
@@ -54,12 +56,12 @@ function DrawArea(props) {
       return;
     }
 
-    const startCoordinates = relativeCoordinatesForEvent(e);
-    console.log("Drawing started. Start Coordinates:", startCoordinates?._root?.entries);
 
+    const startCoordinates = relativeCoordinatesForEvent(e);
+    setStart( startCoordinates ? `X: ${startCoordinates.get('x')}, Y: ${startCoordinates.get('y')}` : null);
     let obj = {
       start: startCoordinates,
-      end: startCoordinates, // Initial end coordinates
+      end: startCoordinates, 
       page: props.page,
       type: "line",
     };
@@ -95,14 +97,20 @@ function DrawArea(props) {
 
   return (
     <>
+     <div>
+      <p>Start Cordinates: {start}</p>
+      <p>End Cordinates: {end}</p>
+     </div>
       <div
         id="drawArea"
         ref={drawAreaEl}
-        style={isCrosshair ? { cursor: "crosshair" } : { cursor: props.cursor }}
+        style={{marginTop: "25px", cursor: isCrosshair ? "crosshair" : props.cursor }}
+
         onMouseMove={handleMouseMove}
       >
         {props.children}
         <Drawing lines={lines} page={props.page} />
+        
       </div>
     </>
   );

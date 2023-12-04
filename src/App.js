@@ -110,11 +110,55 @@ export default function App() {
 
   return (
     <div className="App">
-      <div style={{background:"#1a73e8",height:"60px"}}>
-      <div style={{ display: "flex", alignItems: "center"}}>
-        <input type="file" onChange={handleFileChange} style={{margin:"10px",marginTop:"5px"}} />
+      <div
+        style={{
+          background: "#1a73e8",
+          height: "60px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent:"space-between"
+        }}
+      >
+        <label
+          htmlFor="fileInput"
+          style={{ margin: "10px", cursor: "pointer" }}
+        >
+          <div
+            style={{
+              background: "#1a73e8",
+              color: "#fff",
+              padding: "10px",
+              border: "none",
+              borderRadius: "5px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <span style={{ marginRight: "5px" }}>Upload PDF</span>
+            <input
+              type="file"
+              id="fileInput"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+          </div>
+        </label>
+        <div>
+       {pdfFile &&
+        <div>
+            <button
+              onClick={() => changeButtonType("draw")}
+              style={{ marginTop: "1%", marginBottom: "1%",background:"#1a73e8" }}
+            >
+              Draw
+            </button>
+          </div>}
+        </div>
+        <div style={{color:"whitesmoke",fontSize:"20px",marginRight:"15px", fontWeight: "bold" }}>
+          BIM-BOTS
+        </div>
       </div>
-      </div>
+
       {pdfFile && (
         <>
           {result.map((res) => {
@@ -146,14 +190,7 @@ export default function App() {
             }
           })}
 
-          <div>
-            <button
-              onClick={() => changeButtonType("draw")}
-              style={{ marginTop: "1%", marginBottom: "1%" }}
-            >
-              Draw
-            </button>
-          </div>
+          
 
           <SinglePage
             resetButtonType={resetButtonType}

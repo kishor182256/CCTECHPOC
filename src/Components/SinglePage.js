@@ -7,7 +7,6 @@ export default function SinglePage(props) {
 
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1); 
- console.log("SinglePage",props)
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
     setPageNumber(1);
