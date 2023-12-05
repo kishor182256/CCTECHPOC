@@ -119,7 +119,7 @@ function DrawArea(props) {
         style={{
           marginTop: "25px",
           cursor: isCrosshair ? "crosshair" : props.cursor,
-          transform: `scale(${zoom})`, // Apply zoom transform
+          transform: `scale(${zoom})`, 
         }}
         onMouseMove={handleMouseMove}
       >

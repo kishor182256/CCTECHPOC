@@ -116,9 +116,16 @@ export default function App() {
           height: "60px",
           display: "flex",
           alignItems: "center",
-          justifyContent:"space-between"
+          justifyContent: "space-between",
         }}
       >
+        <div  style={{
+          background: "#1a73e8",
+          height: "60px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}>
         <label
           htmlFor="fileInput"
           style={{ margin: "10px", cursor: "pointer" }}
@@ -143,18 +150,69 @@ export default function App() {
             />
           </div>
         </label>
-        <div>
-       {pdfFile &&
-        <div>
-            <button
-              onClick={() => changeButtonType("draw")}
-              style={{ marginTop: "1%", marginBottom: "1%",background:"#2874A6" }}
-            >
-              Draw
-            </button>
-          </div>}
+        <div style={{ display: "flex" }}>
+          {pdfFile && (
+            <div>
+              <button
+                onClick={() => changeButtonType("draw")}
+                style={{
+                  marginTop: "1%",
+                  marginBottom: "1%",
+                  background: "#2874A6",
+                }}
+              >
+                Draw
+              </button>
+            </div>
+          )}
+          <div style={{ display: "flex" }}>
+            <div>
+              <button
+                // onClick={() => changeButtonType("draw")}
+                style={{
+                  marginTop: "1%",
+                  marginBottom: "1%",
+                  background: "#4361EE",
+                }}
+              >
+                Design
+              </button>
+            </div>
+            <div>
+              <button
+                // onClick={() => changeButtonType("draw")}
+                style={{
+                  marginTop: "1%",
+                  marginBottom: "1%",
+                  background: "#4CC9F0",
+                }}
+              >
+                Calculate
+              </button>
+            </div>
+            <div>
+              <button
+                // onClick={() => changeButtonType("draw")}
+                style={{
+                  marginTop: "1%",
+                  marginBottom: "1%",
+                  background: "#000080",
+                }}
+              >
+                Export
+              </button>
+            </div>
+          </div>
         </div>
-        <div style={{color:"whitesmoke",fontSize:"20px",marginRight:"15px", fontWeight: "bold" }}>
+        </div>
+        <div
+          style={{
+            color: "whitesmoke",
+            fontSize: "20px",
+            marginRight: "15px",
+            fontWeight: "bold",
+          }}
+        >
           BIM-BOTS
         </div>
       </div>
@@ -189,8 +247,6 @@ export default function App() {
               return null;
             }
           })}
-
-          
 
           <SinglePage
             resetButtonType={resetButtonType}
