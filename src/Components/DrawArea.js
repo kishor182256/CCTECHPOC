@@ -5,8 +5,9 @@ function DrawArea(props) {
   const [lines, setLines] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isCrosshair, setIsCrosshair] = useState(false);
-  const [start,setStart] = useState();
-  const [end,setEnd] = useState();
+  const [start, setStart] = useState(null);
+  const [end, setEnd] = useState(null);
+  const [zoom, setZoom] = useState(1);
   const drawAreaEl = useRef(null);
 
   useEffect(() => {
@@ -15,8 +16,13 @@ function DrawArea(props) {
       x: drawAreaEl.current.getBoundingClientRect().left,
       y: drawAreaEl.current.getBoundingClientRect().bottom,
     });
+
+    // Adding the wheel event listener for zooming
+    document.getElementById("drawArea").addEventListener("wheel", handleWheel);
+
     return () => {
       document.getElementById("drawArea").removeEventListener("mouseup", handleMouseUp);
+      document.getElementById("drawArea").removeEventListener("wheel", handleWheel);
     };
   }, []);
 
@@ -42,13 +48,13 @@ function DrawArea(props) {
     if (!isDrawing && lines.length) {
       props.getPaths(lines[lines.length - 1]);
     }
-  }, [ lines, props]);
+  }, [lines, props]);
 
   const handleMouseUp = (e) => {
     setIsCrosshair(false);
     setIsDrawing(false);
     const stopCoordinates = relativeCoordinatesForEvent(e);
-    setEnd( stopCoordinates ? `X: ${stopCoordinates.get('x')}, Y: ${stopCoordinates.get('y')}` : null);
+    setEnd(stopCoordinates ? `X: ${stopCoordinates.get('x')}, Y: ${stopCoordinates.get('y')}` : null);
   };
 
   const handleMouseDown = (e) => {
@@ -56,12 +62,11 @@ function DrawArea(props) {
       return;
     }
 
-
     const startCoordinates = relativeCoordinatesForEvent(e);
-    setStart( startCoordinates ? `X: ${startCoordinates.get('x')}, Y: ${startCoordinates.get('y')}` : null);
+    setStart(startCoordinates ? `X: ${startCoordinates.get('x')}, Y: ${startCoordinates.get('y')}` : null);
     let obj = {
       start: startCoordinates,
-      end: startCoordinates, 
+      end: startCoordinates,
       page: props.page,
       type: "line",
     };
@@ -95,22 +100,31 @@ function DrawArea(props) {
     document.getElementById("drawArea").addEventListener("mousedown", handleMouseDown, { once: true });
   };
 
+  // Handle wheel event for zooming
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1; // Adjust the scale factor as needed
+    setZoom((prevZoom) => prevZoom * scaleFactor);
+  };
+
   return (
     <>
-     <div>
-      <p>Start Cordinates: {start}</p>
-      <p>End Cordinates: {end}</p>
-     </div>
+      <div>
+        <p>Start Coordinates: {start}</p>
+        <p>End Coordinates: {end}</p>
+      </div>
       <div
         id="drawArea"
         ref={drawAreaEl}
-        style={{marginTop: "25px", cursor: isCrosshair ? "crosshair" : props.cursor }}
-
+        style={{
+          marginTop: "25px",
+          cursor: isCrosshair ? "crosshair" : props.cursor,
+          transform: `scale(${zoom})`, // Apply zoom transform
+        }}
         onMouseMove={handleMouseMove}
       >
         {props.children}
         <Drawing lines={lines} page={props.page} />
-        
       </div>
     </>
   );
